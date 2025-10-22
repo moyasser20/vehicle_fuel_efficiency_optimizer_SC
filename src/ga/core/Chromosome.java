@@ -1,4 +1,4 @@
-package ga;
+package ga.core;
 
 public class Chromosome {
 }
