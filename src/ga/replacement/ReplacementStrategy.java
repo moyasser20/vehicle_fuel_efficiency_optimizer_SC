@@ -1,4 +1,7 @@
 package ga.replacement;
 
-public class ReplacementStrategy {
+import ga.core.Population;
+
+public interface ReplacementStrategy {
+    Population replace(Population currentPopulation, Population newPopulation);
 }

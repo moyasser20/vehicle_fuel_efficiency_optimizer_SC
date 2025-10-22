@@ -1,4 +1,7 @@
 package ga.operators.mutation;
 
-public class MutationMethod {
+import ga.core.Chromosome;
+
+public interface MutationMethod {
+    void mutate(Chromosome chromosome);
 }

@@ -1,4 +1,10 @@
 package ga.replacement;
 
-public class GenerationalReplacement {
+import ga.core.Population;
+
+public class GenerationalReplacement implements ReplacementStrategy {
+    @Override
+    public Population replace(Population currentPopulation, Population newPopulation) {
+        return newPopulation;
+    }
 }
