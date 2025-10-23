@@ -3,7 +3,6 @@ package ga.core;
 import java.util.ArrayList;
 import java.util.List;
 
-//da bymsl mgmo3et chromosome
 public class Population {
     private List<Chromosome> individuals;
 

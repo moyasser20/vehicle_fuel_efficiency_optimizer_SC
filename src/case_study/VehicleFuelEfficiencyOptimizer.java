@@ -14,21 +14,17 @@ public class VehicleFuelEfficiencyOptimizer {
         System.out.println("Finding optimal driving behavior for maximum fuel efficiency");
         System.out.println();
         
-        // Create genetic algorithm
         GeneticAlgorithm ga = new GeneticAlgorithm();
         
-        // Configure parameters
         ga.setPopulationSize(50);
         ga.setChromosomeLength(10); // 5 speed-gear pairs
         ga.setGenerations(30);
         ga.setCrossoverRate(0.8);
         ga.setMutationRate(0.1);
         
-        // Set fitness function and infeasibility handler
         ga.setFitnessFunction(new FuelEfficiencyFitness());
         ga.setInfeasibilityHandler(new FuelInfeasibilityHandler());
         
-        // Set operators
         ga.setSelectionMethod(new TournamentSelection());
         ga.setCrossoverMethod(new TwoPointCrossover());
         ga.setMutationMethod(new FloatingMutation());
@@ -37,7 +33,6 @@ public class VehicleFuelEfficiencyOptimizer {
         System.out.println("Running optimization...");
         ga.run();
         
-        // Show results
         Chromosome bestSolution = ga.getBestSolution();
         System.out.println();
         System.out.println("=== RESULTS ===");

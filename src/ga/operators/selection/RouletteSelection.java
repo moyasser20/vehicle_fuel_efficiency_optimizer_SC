@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 
 
-// select with Roulette
 public class RouletteSelection implements SelectionMethod {
     private final Random random = new Random();
 

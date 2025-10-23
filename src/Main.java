@@ -6,8 +6,6 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("=== Soft Computing Library - Phase 1: Genetic Algorithm Demo ===");
         System.out.println();
-        
-        // Run the Vehicle Fuel Efficiency Optimizer case study
         VehicleFuelEfficiencyOptimizer.runOptimization();
         
         System.out.println();
@@ -16,7 +14,6 @@ public class Main {
     }
     
     private static void runSimpleDemo() {
-        // Simple fitness function: maximize x^2 + y^2
         GeneticAlgorithm.FitnessFunction fitnessFunction = new GeneticAlgorithm.FitnessFunction() {
             @Override
             public double evaluate(Chromosome individual) {
@@ -29,7 +26,6 @@ public class Main {
             }
         };
         
-        // Create and configure GA
         GeneticAlgorithm ga = new GeneticAlgorithm();
         ga.setPopulationSize(30);
         ga.setChromosomeLength(2); // x and y coordinates
@@ -44,7 +40,6 @@ public class Main {
         
         ga.run();
         
-        // Show results
         Chromosome bestSolution = ga.getBestSolution();
         double x = bestSolution.getDoubleValue(0) * 10.0 - 5.0;
         double y = bestSolution.getDoubleValue(1) * 10.0 - 5.0;

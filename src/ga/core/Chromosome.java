@@ -47,7 +47,6 @@ public class Chromosome {
         this.fitness = fitness;
     }
 
-    // Helper methods for easier access
     public boolean getBinaryValue(int index) {
         return genes.get(index).getBooleanValue();
     }

@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-//select bel tanafos
 public class TournamentSelection implements SelectionMethod {
     private final Random random = new Random();
     private final int tournamentSize = 3; // can be adjusted
