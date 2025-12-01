@@ -5,25 +5,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Represents a fuzzy IF-THEN rule with editing metadata and optional Sugeno constants.
- */
 public class FuzzyRule implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // Unique identifier for rule management
     private final String id = UUID.randomUUID().toString();
 
-    // antecedent: variable name -> fuzzy set label
     private final Map<String, String> antecedent = new HashMap<>();
-    // consequent: variable name -> fuzzy set label
     private final Map<String, String> consequent = new HashMap<>();
-    // optional Sugeno-style numeric consequents: variable name -> constant output
     private final Map<String, Double> sugenoConsequent = new HashMap<>();
 
-    // editor metadata
     private boolean enabled = true;
-    private double weight = 1.0; // rule weight (0..1 typical)
+    private double weight = 1.0;
 
     public FuzzyRule() {}
 

@@ -19,16 +19,16 @@ public class Main {
             public double evaluate(Chromosome individual) {
                 if (individual.getLength() < 2) return 0.0;
                 
-                double x = individual.getDoubleValue(0) * 10.0 - 5.0; // Scale to [-5, 5]
-                double y = individual.getDoubleValue(1) * 10.0 - 5.0; // Scale to [-5, 5]
+                double x = individual.getDoubleValue(0) * 10.0 - 5.0;
+                double y = individual.getDoubleValue(1) * 10.0 - 5.0;
                 
-                return x * x + y * y; // Maximize this function
+                return x * x + y * y;
             }
         };
         
         GeneticAlgorithm ga = new GeneticAlgorithm();
         ga.setPopulationSize(30);
-        ga.setChromosomeLength(2); // x and y coordinates
+        ga.setChromosomeLength(2);
         ga.setGenerations(20);
         ga.setCrossoverRate(0.7);
         ga.setMutationRate(0.02);

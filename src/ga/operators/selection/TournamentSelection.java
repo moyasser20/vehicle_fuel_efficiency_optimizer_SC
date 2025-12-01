@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class TournamentSelection implements SelectionMethod {
     private final Random random = new Random();
-    private final int tournamentSize = 3; // can be adjusted
+    private final int tournamentSize = 3;
 
     @Override
     public List<Chromosome> select(Population population) {

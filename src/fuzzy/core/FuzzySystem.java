@@ -22,12 +22,11 @@ public class FuzzySystem {
 	private InferenceEngine engine;
 	private Defuzzifier defuzzifier;
 
-	// sensible defaults (can be overridden)
 	private NormOperator defaultNorm = new MinMaxNorm();
-	private String defaultMFType = "triangular"; // triangular|trapezoidal|gaussian
+	private String defaultMFType = "triangular";
 	private int defaultNumSets = 3;
 	private Defuzzifier defaultDefuzzifier = new CentroidDefuzzifier();
-	private String defaultInference = "mamdani"; // mamdani|sugeno
+	private String defaultInference = "mamdani";
 
 	public void addVariable(LinguisticVariable v) { variables.put(v.getName(), v); }
 	public LinguisticVariable getVariable(String name) { return variables.get(name); }
@@ -36,7 +35,6 @@ public class FuzzySystem {
 	public void setInferenceEngine(InferenceEngine engine) { this.engine = engine; }
 	public void setDefuzzifier(Defuzzifier d) { this.defuzzifier = d; }
 
-	// Accessors useful for wiring engines/tests
 	public Map<String, LinguisticVariable> getVariableMap() { return variables; }
 	public List<FuzzyRule> getRulesList() { return rules; }
 
@@ -44,13 +42,10 @@ public class FuzzySystem {
 		return evaluateWithTrace(inputs).getCrispOutputs();
 	}
 
-	//Evaluate and return a detailed trace (fuzzified inputs, per-rule firings, aggregated maps, and crisp outputs).
-	 
 	public EvaluationResult evaluateWithTrace(Map<String, Double> inputs) {
 		if (engine == null || defuzzifier == null) throw new IllegalStateException("Engine/Defuzzifier not set");
 
 		Map<String, Map<String, Double>> fuzzified = new LinkedHashMap<>();
-		// fuzzify all known variables using clamp/default rules
 		for (Map.Entry<String, LinguisticVariable> ve : variables.entrySet()) {
 			String var = ve.getKey();
 			LinguisticVariable lv = ve.getValue();
@@ -68,11 +63,9 @@ public class FuzzySystem {
 		return new EvaluationResult(fuzzified, trace, crisp);
 	}
 
-	// RuleBase helpers
 	public RuleBase getRuleBase() { return new RuleBase(new ArrayList<>(rules)); }
 	public void setRuleBase(RuleBase rb) { rules.clear(); if (rb != null) rules.addAll(rb.listRules()); }
 
-	// Defaults API
 	public void setDefaultNorm(NormOperator norm) { this.defaultNorm = norm; }
 	public NormOperator getDefaultNorm() { return defaultNorm; }
 
@@ -88,15 +81,10 @@ public class FuzzySystem {
 	public void setDefaultInference(String s) { this.defaultInference = s == null ? "mamdani" : s.toLowerCase(); }
 	public String getDefaultInference() { return defaultInference; }
 
-	//Convenience: create and add a variable using current defaults (num sets and MF type).
-	
 	public LinguisticVariable addVariableWithDefaults(String name, double min, double max) {
 		return addVariableWithDefaults(name, min, max, defaultNumSets, defaultMFType);
 	}
 
-	//Create and add a linguistic variable partitioned into n sets using the selected MF type.
-	// Endpoints use trapezoidal shapes (for triangular default) to cover the domain.
-	 
 	public LinguisticVariable addVariableWithDefaults(String name, double min, double max, int n, String mfType) {
 		n = Math.max(2, n);
 		String mf = mfType == null ? defaultMFType : mfType.toLowerCase();
@@ -118,14 +106,12 @@ public class FuzzySystem {
 				double sigma = step <= 0 ? 1.0 : step / 2.0;
 				lv.addFuzzySet(new FuzzySet(label, new GaussianMF(center, sigma), min, max));
 			} else if (mf.equals("trapezoidal")) {
-				// make endpoints trapezoidal, inner ones trapezoidal too but with narrow shoulders
 				double a = Math.max(min, center - step);
 				double b = Math.max(min, center - step / 2.0);
 				double c = Math.min(max, center + step / 2.0);
 				double d = Math.min(max, center + step);
 				lv.addFuzzySet(new FuzzySet(label, new TrapezoidalMF(a, b, c, d), min, max));
 			} else {
-				// triangular default for inner sets; endpoints as trapezoids
 				if (i == 0) {
 					double a = min;
 					double b = min;
@@ -148,13 +134,10 @@ public class FuzzySystem {
 		return lv;
 	}
 
-	//Apply current defaults to wire a default inference engine and defuzzifier into the system.
 	public void applyDefaultEngine() {
-		// default to Mamdani
 		if ("mamdani".equals(defaultInference)) {
 			this.engine = new MamdaniEngine(variables, rules, defaultNorm, new MinImplication());
 			this.defuzzifier = defaultDefuzzifier;
 		}
-		// Sugeno could be added similarly (not wired here by default)
 	}
 }

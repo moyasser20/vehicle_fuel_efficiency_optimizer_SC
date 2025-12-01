@@ -27,21 +27,18 @@ public class LinguisticVariable {
         return degrees;
     }
 
-    /** Return the minimum domain value across all sets, or 0 if none. */
     public double getDomainMin() {
         double min = Double.POSITIVE_INFINITY;
         for (FuzzySet s : sets) min = Math.min(min, s.getMin());
         return min == Double.POSITIVE_INFINITY ? 0.0 : min;
     }
 
-    /** Return the maximum domain value across all sets, or 0 if none. */
     public double getDomainMax() {
         double max = Double.NEGATIVE_INFINITY;
         for (FuzzySet s : sets) max = Math.max(max, s.getMax());
         return max == Double.NEGATIVE_INFINITY ? 0.0 : max;
     }
 
-    /** Clamp an input value to the variable's domain. */
     public double clamp(double x) {
         double min = getDomainMin();
         double max = getDomainMax();
@@ -50,7 +47,6 @@ public class LinguisticVariable {
         return x;
     }
 
-    /** Default value to use when input is missing: midpoint of domain. */
     public double getDefault() {
         double min = getDomainMin();
         double max = getDomainMax();

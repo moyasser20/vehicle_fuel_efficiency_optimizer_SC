@@ -17,7 +17,7 @@ public class VehicleFuelEfficiencyOptimizer {
         GeneticAlgorithm ga = new GeneticAlgorithm();
         
         ga.setPopulationSize(50);
-        ga.setChromosomeLength(10); // 5 speed-gear pairs
+        ga.setChromosomeLength(10);
         ga.setGenerations(30);
         ga.setCrossoverRate(0.8);
         ga.setMutationRate(0.1);

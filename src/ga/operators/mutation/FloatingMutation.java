@@ -13,7 +13,7 @@ public class FloatingMutation implements MutationMethod {
         Gene g = chromosome.getGenes().get(index);
 
         double currentValue = g.getDoubleValue();
-        double noise = (random.nextDouble() - 0.5) * 0.2; // ±10%
+        double noise = (random.nextDouble() - 0.5) * 0.2;
         g.setValue(currentValue + noise);
     }
 }

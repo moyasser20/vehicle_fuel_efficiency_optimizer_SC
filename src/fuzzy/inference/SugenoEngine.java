@@ -37,7 +37,6 @@ public class SugenoEngine implements InferenceEngine {
         Map<String, Double> denominators = new HashMap<>();
         Map<String, Double> ruleFirings = new HashMap<>();
 
-        // initialize maps for output variables discovered in rules' sugeno consequents
         for (FuzzyRule r : rules) {
             for (String var : r.getSugenoConsequent().keySet()) {
                 numerators.putIfAbsent(var, 0.0);
@@ -45,7 +44,6 @@ public class SugenoEngine implements InferenceEngine {
             }
         }
 
-        // Evaluate each rule's firing strength and accumulate
         for (FuzzyRule rule : rules) {
             Double firing = null;
             for (Map.Entry<String, String> a : rule.getAntecedent().entrySet()) {
@@ -69,12 +67,10 @@ public class SugenoEngine implements InferenceEngine {
 
             if (firing == null || firing <= 0.0) continue;
 
-            // respect rule enabled flag and weight
             if (!rule.isEnabled()) continue;
             firing = firing * rule.getWeight();
             ruleFirings.put(rule.getId(), firing);
 
-            // accumulate for each numeric consequent present in the rule
             for (Map.Entry<String, Double> c : rule.getSugenoConsequent().entrySet()) {
                 String outVar = c.getKey();
                 double z = c.getValue();
@@ -83,7 +79,6 @@ public class SugenoEngine implements InferenceEngine {
             }
         }
 
-        // Build aggregated map in same shape as Mamdani: map of x->mu with single crisp point
         Map<String, Map<Double, Double>> aggregated = new HashMap<>();
         for (String var : numerators.keySet()) {
             double num = numerators.get(var);

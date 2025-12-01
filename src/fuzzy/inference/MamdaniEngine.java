@@ -45,9 +45,7 @@ public class MamdaniEngine implements InferenceEngine {
 		Map<String, Map<Double, Double>> aggregated = new HashMap<>();
 		Map<String, Double> ruleFirings = new HashMap<>();
 
-		// Evaluate each rule
 		for (FuzzyRule rule : rules) {
-			// compute firing strength using norm AND across antecedents
 			Double firing = null;
 			for (Map.Entry<String, String> a : rule.getAntecedent().entrySet()) {
 				String var = a.getKey();
@@ -73,7 +71,6 @@ public class MamdaniEngine implements InferenceEngine {
 			firing = firing * rule.getWeight();
 			ruleFirings.put(rule.getId(), firing);
 
-			// For each consequent fuzzy set, clip or scale its membership across the output domain and aggregate
 			for (Map.Entry<String, String> c : rule.getConsequent().entrySet()) {
 				String outVar = c.getKey();
 				String outSetLabel = c.getValue();
@@ -86,7 +83,6 @@ public class MamdaniEngine implements InferenceEngine {
 
 				Map<Double, Double> outMap = aggregated.computeIfAbsent(outVar, k -> new HashMap<>());
 
-				// discretize the domain
 				for (int i = 0; i < samples; i++) {
 					double x = min + (max - min) * i / (samples - 1);
 					double mu = 0.0;
