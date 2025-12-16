@@ -10,3 +10,5 @@ public interface InferenceEngine {
         return new InferenceTrace(agg, java.util.Collections.emptyMap());
     }
 }
+
+//aggregated output from fuzzy inputs to crisp outputs

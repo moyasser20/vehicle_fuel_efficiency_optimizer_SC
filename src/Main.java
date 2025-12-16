@@ -1,4 +1,5 @@
 import case_study.VehicleFuelEfficiencyOptimizer;
+import case_study.FuelEfficiencyNN;
 import ga.core.GeneticAlgorithm;
 import ga.core.Chromosome;
 
@@ -11,6 +12,12 @@ public class Main {
         System.out.println();
         System.out.println("=== Simple Function Optimization Demo ===");
         runSimpleDemo();
+        
+        System.out.println();
+        System.out.println();
+        System.out.println("=== Soft Computing Library - Phase 3: Neural Network Demo ===");
+        System.out.println();
+        FuelEfficiencyNN.runDemo();
     }
     
     private static void runSimpleDemo() {
