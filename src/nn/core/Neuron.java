@@ -1,15 +1,11 @@
 package nn.core;
 
-/**
- * Represents a single neuron in a neural network layer.
- * Each neuron has weights, bias, and activation function.
- */
 public class Neuron {
     private double[] weights;
     private double bias;
     private double output;
-    private double delta; // For backpropagation
-    private double[] weightGradients; // For gradient accumulation
+    private double delta;
+    private double[] weightGradients;
     private double biasGradient;
     
     public Neuron(int inputSize) {
@@ -75,4 +71,5 @@ public class Neuron {
         biasGradient += gradient;
     }
 }
+
 

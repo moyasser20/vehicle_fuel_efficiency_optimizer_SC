@@ -6,9 +6,6 @@ import nn.loss.LossFunction;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Main neural network class that manages layers and training.
- */
 public class Network {
     private List<Layer> layers;
     private LossFunction lossFunction;
@@ -16,14 +13,13 @@ public class Network {
     private double learningRate;
     private int inputSize;
     
-    // Training history
     private List<Double> trainingLossHistory;
     
     public Network(int inputSize) {
         this.inputSize = inputSize;
         this.layers = new ArrayList<>();
         this.trainingLossHistory = new ArrayList<>();
-        this.learningRate = 0.01; // Default learning rate
+        this.learningRate = 0.01;
     }
     
     public void addLayer(int outputSize, ActivationFunction activationFunction) {
@@ -61,9 +57,6 @@ public class Network {
         return trainingLossHistory;
     }
     
-    /**
-     * Initialize all weights in the network using the specified initializer.
-     */
     private void initializeWeights() {
         if (weightInitializer == null) {
             return;
@@ -79,11 +72,6 @@ public class Network {
         }
     }
     
-    /**
-     * Forward propagation through the entire network.
-     * @param inputs Input values
-     * @return Output values
-     */
     public double[] forward(double[] inputs) {
         if (inputs.length != inputSize) {
             throw new IllegalArgumentException("Input size mismatch: expected " + inputSize + ", got " + inputs.length);
@@ -96,10 +84,6 @@ public class Network {
         return currentInput;
     }
     
-    /**
-     * Backward propagation through the entire network.
-     * @param expectedOutput Expected output values
-     */
     public void backward(double[] expectedOutput) {
         if (lossFunction == null) {
             throw new IllegalStateException("Loss function must be set before training");
@@ -108,61 +92,36 @@ public class Network {
         Layer outputLayer = layers.get(layers.size() - 1);
         double[] output = outputLayer.getOutputs();
         
-        // Calculate output layer deltas using loss function
         double[] outputDeltas = lossFunction.computeGradient(output, expectedOutput);
         
-        // Backpropagate through all layers
         double[] currentDeltas = outputDeltas;
         for (int i = layers.size() - 1; i >= 0; i--) {
             currentDeltas = layers.get(i).backward(currentDeltas);
         }
     }
     
-    /**
-     * Update all weights in the network.
-     */
     public void updateWeights() {
         for (Layer layer : layers) {
             layer.updateWeights(learningRate);
         }
     }
     
-    /**
-     * Train the network on a single sample.
-     * @param inputs Input values
-     * @param expectedOutput Expected output values
-     * @return Loss value
-     */
     public double trainSample(double[] inputs, double[] expectedOutput) {
-        // Forward pass
         double[] output = forward(inputs);
         
-        // Calculate loss
         double loss = lossFunction.compute(output, expectedOutput);
         
-        // Backward pass
         backward(expectedOutput);
         
-        // Update weights
         updateWeights();
         
         return loss;
     }
     
-    /**
-     * Predict output for a single input.
-     * @param inputs Input values
-     * @return Predicted output values
-     */
     public double[] predict(double[] inputs) {
         return forward(inputs);
     }
     
-    /**
-     * Predict outputs for a batch of inputs.
-     * @param inputsBatch Batch of input values
-     * @return Batch of predicted output values
-     */
     public double[][] predictBatch(double[][] inputsBatch) {
         double[][] predictions = new double[inputsBatch.length][];
         for (int i = 0; i < inputsBatch.length; i++) {
@@ -171,12 +130,6 @@ public class Network {
         return predictions;
     }
     
-    /**
-     * Evaluate the network on a dataset.
-     * @param inputs Input samples
-     * @param expectedOutputs Expected output samples
-     * @return Average loss
-     */
     public double evaluate(double[][] inputs, double[][] expectedOutputs) {
         if (lossFunction == null) {
             throw new IllegalStateException("Loss function must be set before evaluation");
@@ -190,11 +143,6 @@ public class Network {
         return totalLoss / inputs.length;
     }
     
-    /**
-     * Get intermediate values for debugging.
-     * @param inputs Input values
-     * @return List of layer outputs (including input)
-     */
     public List<double[]> getIntermediateValues(double[] inputs) {
         List<double[]> intermediate = new ArrayList<>();
         intermediate.add(inputs.clone());
