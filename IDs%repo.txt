@@ -1,0 +1,11 @@
+Mohamed Yasser – 20226095
+
+Mouayed Amr – 20226108
+
+Youssef Hisham – 20226118
+
+Ahmed Amr – 20226005
+
+Omar Ibrahim – 20226066
+
+repo link: https://github.com/moyasser20/vehicle_fuel_efficiency_optimizer_SC/tree/phase3-Neural-Networks
