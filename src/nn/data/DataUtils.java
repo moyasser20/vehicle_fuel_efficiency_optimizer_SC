@@ -1,5 +1,8 @@
 package nn.data;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -174,6 +177,51 @@ public class DataUtils {
             }
             return original;
         }
+    }
+    
+    public static double[][] loadCSV(String filePath, int[] columnIndices, boolean skipHeader) {
+        List<double[]> data = new ArrayList<>();
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            boolean isFirstLine = true;
+            
+            while ((line = br.readLine()) != null) {
+                if (skipHeader && isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+                
+                String[] values = line.split(",");
+                double[] row = new double[columnIndices.length];
+                
+                for (int i = 0; i < columnIndices.length; i++) {
+                    int colIdx = columnIndices[i];
+                    if (colIdx < values.length) {
+                        try {
+                            String value = values[colIdx].trim();
+                            if (value.equalsIgnoreCase("True")) {
+                                row[i] = 1.0;
+                            } else if (value.equalsIgnoreCase("False")) {
+                                row[i] = 0.0;
+                            } else {
+                                row[i] = Double.parseDouble(value);
+                            }
+                        } catch (NumberFormatException e) {
+                            row[i] = 0.0;
+                        }
+                    } else {
+                        row[i] = 0.0;
+                    }
+                }
+                
+                data.add(row);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading CSV file: " + filePath, e);
+        }
+        
+        return data.toArray(new double[data.size()][]);
     }
 }
 

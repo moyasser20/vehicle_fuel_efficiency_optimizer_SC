@@ -27,3 +27,21 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+production/case_study/FuelEfficiencyNN.class
+production/nn/activation/ActivationFunction.class
+production/nn/activation/Linear.class
+production/nn/activation/ReLU.class
+production/nn/activation/Sigmoid.class
+production/nn/core/Layer.class
+production/nn/core/Network.class
+production/nn/core/Neuron.class
+production/nn/data/DataUtils.class
+production/nn/data/DataUtils$NormalizationResult.class
+production/nn/data/DataUtils$StandardizationResult.class
+production/nn/initialization/He.class
+production/nn/initialization/WeightInitializer.class
+production/nn/initialization/Xavier.class
+production/nn/loss/CrossEntropy.class
+production/nn/loss/LossFunction.class
+production/nn/loss/MSE.class
+production/nn/training/Trainer.class

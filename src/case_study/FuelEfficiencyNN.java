@@ -14,13 +14,17 @@ import nn.data.DataUtils;
 /**
  * Case Study: Vehicle Fuel Efficiency Prediction using Neural Networks
  * 
- * Problem: Predict fuel efficiency (MPG) based on vehicle characteristics
- * Dataset: Synthetic vehicle data with features like:
- *   - Engine size
- *   - Cylinders
- *   - Horsepower
- *   - Weight
- *   - Acceleration
+ * Problem: Predict fuel efficiency based on driving behavior
+ * Dataset: Real telemetry data from Max Verstappen's 2024 Miami Grand Prix
+ * 
+ * Input Features (3):
+ *   - Speed (km/h): Vehicle speed, directly affects fuel consumption
+ *   - Gear Number (nGear): Current gear, affects engine efficiency
+ *   - Throttle Position (%): Driver input, indicates acceleration/engine load
+ * 
+ * Output:
+ *   - Fuel Efficiency Score: Calculated metric based on RPM, Speed, and Throttle
+ *     Higher score = better fuel efficiency (more speed with less engine load)
  * 
  * This is a regression problem, so we use:
  *   - MSE loss function
@@ -36,10 +40,47 @@ public class FuelEfficiencyNN {
         System.out.println("==========================================");
         System.out.println();
         
-        // Generate synthetic dataset
-        System.out.println("Generating synthetic vehicle dataset...");
-        double[][] inputs = generateVehicleData();
-        double[][] outputs = generateFuelEfficiency(inputs);
+        // Load real dataset from CSV
+        String csvPath = "vehicle-DataSet/verstappen_telemetry_miami_2024.csv";
+        System.out.println("Loading dataset from: " + csvPath);
+        
+        // Load all relevant columns: RPM (2), Speed (3), nGear (4), Throttle (5)
+        // Column indices: 0=index, 1=Date, 2=RPM, 3=Speed, 4=nGear, 5=Throttle, ...
+        double[][] allData = DataUtils.loadCSV(csvPath, new int[]{2, 3, 4, 5}, true);
+        
+        System.out.println("Loaded " + allData.length + " samples from dataset");
+        
+        // Extract inputs: Speed (index 1), nGear (index 2), Throttle (index 3)
+        // Extract RPM (index 0) for calculating fuel efficiency
+        double[][] inputs = new double[allData.length][3];
+        double[][] outputs = new double[allData.length][1];
+        
+        for (int i = 0; i < allData.length; i++) {
+            double rpm = allData[i][0];
+            double speed = allData[i][1];
+            double gear = allData[i][2];
+            double throttle = allData[i][3];
+            
+            // Inputs: Speed, Gear, Throttle
+            inputs[i][0] = speed;
+            inputs[i][1] = gear;
+            inputs[i][2] = throttle;
+            
+            // Calculate fuel efficiency score
+            // Higher score = better efficiency (more speed with less engine load)
+            // Formula: Speed / (RPM * normalized_throttle)
+            // We normalize throttle to avoid division by zero
+            double normalizedThrottle = (throttle / 100.0) + 0.1; // Add small value to avoid zero
+            double fuelEfficiency = 0.0;
+            if (rpm > 0 && normalizedThrottle > 0) {
+                fuelEfficiency = speed / (rpm * normalizedThrottle);
+            }
+            
+            outputs[i][0] = fuelEfficiency;
+        }
+        
+        System.out.println("Extracted 3 input features: Speed, Gear, Throttle");
+        System.out.println("Calculated fuel efficiency scores from RPM data");
         
         // Normalize inputs
         DataUtils.NormalizationResult inputNorm = DataUtils.normalize(inputs);
@@ -64,9 +105,9 @@ public class FuelEfficiencyNN {
         
         // Create neural network
         System.out.println("Creating neural network...");
-        Network network = new Network(5); // 5 input features
+        Network network = new Network(3); // 3 input features: Speed, Gear, Throttle
         
-        // Architecture: 5 -> 10 -> 8 -> 1
+        // Architecture: 3 -> 10 -> 8 -> 1
         network.addLayer(10, new ReLU());  // Hidden layer 1
         network.addLayer(8, new ReLU());   // Hidden layer 2
         network.addLayer(1, new Linear()); // Output layer (regression)
@@ -85,10 +126,10 @@ public class FuelEfficiencyNN {
         trainer.setShuffleData(true);
         
         System.out.println("Network architecture:");
-        System.out.println("  Input layer: 5 neurons");
+        System.out.println("  Input layer: 3 neurons (Speed, Gear, Throttle)");
         System.out.println("  Hidden layer 1: 10 neurons (ReLU)");
         System.out.println("  Hidden layer 2: 8 neurons (ReLU)");
-        System.out.println("  Output layer: 1 neuron (Linear)");
+        System.out.println("  Output layer: 1 neuron (Linear) - Fuel Efficiency Score");
         System.out.println("  Loss function: MSE");
         System.out.println("  Weight initialization: Xavier");
         System.out.println("  Learning rate: 0.01");
@@ -117,9 +158,13 @@ public class FuelEfficiencyNN {
             double[] denormalizedActual = outputNorm.denormalize(testOutputs[i]);
             
             System.out.printf("Sample %d:%n", i + 1);
-            System.out.printf("  Predicted MPG: %.2f%n", denormalizedPred[0]);
-            System.out.printf("  Actual MPG:    %.2f%n", denormalizedActual[0]);
-            System.out.printf("  Error:         %.2f%n", Math.abs(denormalizedPred[0] - denormalizedActual[0]));
+            System.out.printf("  Input - Speed: %.1f km/h, Gear: %.0f, Throttle: %.1f%%%n", 
+                inputNorm.denormalize(testInputs[i])[0],
+                inputNorm.denormalize(testInputs[i])[1],
+                inputNorm.denormalize(testInputs[i])[2]);
+            System.out.printf("  Predicted Fuel Efficiency Score: %.6f%n", denormalizedPred[0]);
+            System.out.printf("  Actual Fuel Efficiency Score:    %.6f%n", denormalizedActual[0]);
+            System.out.printf("  Error:                           %.6f%n", Math.abs(denormalizedPred[0] - denormalizedActual[0]));
             System.out.println();
         }
         
@@ -137,66 +182,9 @@ public class FuelEfficiencyNN {
         }
     }
     
-    /**
-     * Generate synthetic vehicle data.
-     * Features: [engine_size, cylinders, horsepower, weight, acceleration]
-     */
-    private static double[][] generateVehicleData() {
-        int numSamples = 200;
-        double[][] data = new double[numSamples][5];
-        
-        for (int i = 0; i < numSamples; i++) {
-            // Engine size (liters): 1.0 - 6.0
-            data[i][0] = 1.0 + Math.random() * 5.0;
-            
-            // Cylinders: 4, 6, or 8
-            int[] cylinders = {4, 6, 8};
-            data[i][1] = cylinders[(int)(Math.random() * 3)];
-            
-            // Horsepower: 50 - 400
-            data[i][2] = 50 + Math.random() * 350;
-            
-            // Weight (kg): 1000 - 3000
-            data[i][3] = 1000 + Math.random() * 2000;
-            
-            // Acceleration (0-60 mph in seconds): 5 - 20
-            data[i][4] = 5 + Math.random() * 15;
-        }
-        
-        return data;
-    }
-    
-    /**
-     * Generate fuel efficiency based on vehicle characteristics.
-     * Simple formula: MPG decreases with engine size, weight, and horsepower,
-     * and increases with acceleration.
-     */
-    private static double[][] generateFuelEfficiency(double[][] inputs) {
-        double[][] outputs = new double[inputs.length][1];
-        
-        for (int i = 0; i < inputs.length; i++) {
-            double engineSize = inputs[i][0];
-            double cylinders = inputs[i][1];
-            double horsepower = inputs[i][2];
-            double weight = inputs[i][3];
-            double acceleration = inputs[i][4];
-            
-            // Simple formula with some noise
-            double mpg = 50.0 
-                - engineSize * 3.0
-                - (cylinders - 4) * 2.0
-                - horsepower / 20.0
-                - weight / 100.0
-                + (20 - acceleration) * 0.5
-                + (Math.random() - 0.5) * 5.0; // Add noise
-            
-            // Clamp to reasonable range
-            mpg = Math.max(10.0, Math.min(50.0, mpg));
-            outputs[i][0] = mpg;
-        }
-        
-        return outputs;
-    }
 }
+
+
+
 
 
