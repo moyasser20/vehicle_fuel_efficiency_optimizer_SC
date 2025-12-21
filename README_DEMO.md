@@ -138,3 +138,4 @@ Include in your ZIP file:
 **Error: "Package does not exist"**
 - Compile all source files: `javac -d production -sourcepath src src/**/*.java`
 - Or use the helper scripts which handle compilation automatically
+

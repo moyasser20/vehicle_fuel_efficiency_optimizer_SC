@@ -128,3 +128,4 @@ print(f"Average Loss:             {np.mean(losses_array):.6f}")
 print(f"Min Loss:                 {np.min(losses_array):.6f}")
 print(f"Max Loss:                 {np.max(losses_array):.6f}")
 print("="*60)
+

@@ -1076,3 +1076,4 @@ plt.show()
 **Project:** Vehicle Fuel Efficiency Optimizer
 **Domain:** Automotive / Simulation
 **Method:** Neural Networks (Feedforward MLP)
+

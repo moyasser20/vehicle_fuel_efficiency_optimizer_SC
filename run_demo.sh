@@ -24,3 +24,4 @@ java -cp production NNMain
 echo ""
 echo "========================================"
 echo "Demo completed!"
+
